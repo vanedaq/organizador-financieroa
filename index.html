@@ -15,10 +15,6 @@
     <!-- Manifest -->
     <link rel="manifest" href="manifest.json">
     
-    <!-- Icons -->
-    <link rel="icon" type="image/png" sizes="32x32" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iOCIgZmlsbD0iIzY2N2VlYSIvPgo8dGV4dCB4PSI1IiB5PSIyMiIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE4IiBmaWxsPSJ3aGl0ZSI+JDwvdGV4dD4KPC9zdmc+">
-    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDE4MCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxODAiIGhlaWdodD0iMTgwIiByeD0iNDAiIGZpbGw9IiM2NjdlZWEiLz4KPHRleHQgeD0iMzAiIHk9IjEyMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjgwIiBmaWxsPSJ3aGl0ZSI+JDwvdGV4dD4KPC9zdmc+">
-    
     <title>Mi Organizador Financiero</title>
     <style>
         * {
@@ -35,7 +31,6 @@
             position: relative;
         }
         
-        /* PWA Install Banner */
         .install-banner {
             position: fixed;
             bottom: 20px;
@@ -409,7 +404,6 @@
             display: none;
         }
         
-        /* Offline indicator */
         .offline-indicator {
             position: fixed;
             top: 10px;
@@ -427,7 +421,6 @@
             display: block;
         }
         
-        /* Mobile optimizations */
         @media (max-width: 768px) {
             body {
                 padding: 5px;
@@ -492,16 +485,14 @@
     </style>
 </head>
 <body>
-    <!-- Offline Indicator -->
     <div id="offlineIndicator" class="offline-indicator">
-        📶 Sin conexión - Funcionando offline
+        Sin conexión - Funcionando offline
     </div>
     
-    <!-- Install Banner -->
     <div id="installBanner" class="install-banner">
         <div class="install-banner-content">
             <div class="install-text">
-                <strong>📱 ¡Instala la App!</strong><br>
+                <strong>¡Instala la App!</strong><br>
                 <small>Accede rápido desde tu pantalla de inicio</small>
             </div>
             <div class="install-buttons">
@@ -582,7 +573,6 @@
         </div>
         
         <div class="content">
-            <!-- Ingresos -->
             <div id="ingresos" class="tab-content">
                 <div class="section-header">
                     <h2>💵 Ingresos Mensuales</h2>
@@ -591,7 +581,6 @@
                 <div id="listaIngresos"></div>
             </div>
             
-            <!-- Gastos Fijos -->
             <div id="fijos" class="tab-content hidden">
                 <div class="section-header">
                     <h2>🏠 Gastos Fijos</h2>
@@ -600,7 +589,6 @@
                 <div id="listaFijos"></div>
             </div>
             
-            <!-- Gastos Variables -->
             <div id="variables" class="tab-content hidden">
                 <div class="section-header">
                     <h2>💳 Créditos y Tarjetas</h2>
@@ -609,7 +597,6 @@
                 <div id="listaVariables"></div>
             </div>
             
-            <!-- Compras -->
             <div id="compras" class="tab-content hidden">
                 <div class="section-header">
                     <h2>🛒 Compras Diarias</h2>
@@ -618,7 +605,6 @@
                 <div id="listaCompras"></div>
             </div>
             
-            <!-- Historial -->
             <div id="historial" class="tab-content hidden">
                 <div class="section-header">
                     <h2>📊 Historial Mensual</h2>
@@ -627,7 +613,6 @@
                 <div id="tablaHistorial"></div>
             </div>
             
-            <!-- Proyecciones -->
             <div id="proyecciones" class="tab-content hidden">
                 <div class="section-header">
                     <h2>🔮 Proyecciones</h2>
@@ -642,7 +627,6 @@
         let datos = JSON.parse(localStorage.getItem('organizadorFinanciero') || '{}');
         let deferredPrompt = null;
         
-        // Inicializar datos del mes actual si no existen
         if (!datos[mesActual]) {
             datos[mesActual] = {
                 ingresos: [],
@@ -652,10 +636,8 @@
             };
         }
         
-        // Establecer mes actual en selector
         document.getElementById('mesSelector').value = mesActual;
 
-        // PWA Installation
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -680,7 +662,6 @@
             localStorage.setItem('installDismissed', Date.now());
         }
 
-        // Offline Detection
         function updateOnlineStatus() {
             const offlineIndicator = document.getElementById('offlineIndicator');
             if (navigator.onLine) {
@@ -693,18 +674,18 @@
         window.addEventListener('online', updateOnlineStatus);
         window.addEventListener('offline', updateOnlineStatus);
 
-        // Service Worker Registration
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then((registration) => {
-                        console.log('SW registrado: ', registration);
-                    })
-                    .catch((registrationError) => {
-                        console.log('SW falló: ', registrationError);
-                    });
-            });
-        }
+        // Service Worker deshabilitado temporalmente
+        // if ('serviceWorker' in navigator) {
+        //     window.addEventListener('load', () => {
+        //         navigator.serviceWorker.register('sw.js')
+        //             .then((registration) => {
+        //                 console.log('SW registrado: ', registration);
+        //             })
+        //             .catch((registrationError) => {
+        //                 console.log('SW falló: ', registrationError);
+        //             });
+        //     });
+        // }
 
         function formatMoney(amount) {
             return new Intl.NumberFormat('es-CO', {
@@ -792,96 +773,29 @@
         }
 
         function agregarGastoVariable() {
-            const concepto = prompt('Concepto (ej: Tarjeta Visa):');
+            const concepto = prompt('Concepto (ej: Tarjeta Visa, Préstamo):');
             if (!concepto) return;
             
-            const tipoCalculo = confirm('¿Ingresar cuota mensual directamente?\n\nSí = Cuota conocida\nNo = Calcular desde monto total');
+            const cuotaMensual = parseFloat(prompt('Cuota mensual:'));
+            if (!cuotaMensual || cuotaMensual <= 0) return;
             
-            let gastoVariable = {
+            const cuotasRestantes = parseInt(prompt('Cuotas que faltan:'));
+            if (!cuotasRestantes || cuotasRestantes <= 0) return;
+            
+            const fechaPago = prompt('Día de pago (DD):');
+            if (!fechaPago) return;
+            
+            const montoPendiente = cuotaMensual * cuotasRestantes;
+            
+            datos[mesActual].gastosVariables.push({
                 id: Date.now(),
-                concepto
-            };
+                concepto,
+                cuotaMensual,
+                cuotasRestantes,
+                montoPendiente,
+                fechaPago
+            });
             
-            if (tipoCalculo) {
-                const cuotaMensual = parseFloat(prompt('Valor de la cuota mensual:'));
-                if (!cuotaMensual || cuotaMensual <= 0) return;
-                
-                const cuotasRestantes = parseInt(prompt('Cuotas que faltan:'));
-                if (!cuotasRestantes || cuotasRestantes <= 0) return;
-                
-                const montoTotal = parseFloat(prompt('Monto total original (opcional):', '0'));
-                const montoPendiente = cuotaMensual * cuotasRestantes;
-                
-                const fechaPago = prompt('Día de pago (DD):');
-                if (!fechaPago) return;
-                
-                let tasaInteres = 0;
-                if (montoTotal > 0) {
-                    const cuotasOriginales = parseInt(prompt('Cuotas totales originales:', cuotasRestantes.toString()));
-                    if (cuotasOriginales) {
-                        const totalPagado = cuotaMensual * cuotasOriginales;
-                        const interesTotal = totalPagado - montoTotal;
-                        tasaInteres = (interesTotal / montoTotal) * 100;
-                    }
-                }
-                
-                gastoVariable = {
-                    ...gastoVariable,
-                    cuotaMensual,
-                    montoPendiente,
-                    cuotasRestantes,
-                    montoTotal: montoTotal || 0,
-                    cuotas: cuotasRestantes,
-                    fechaPago,
-                    tasaInteres: Math.round(tasaInteres * 100) / 100,
-                    tipoCalculo: 'cuota_directa'
-                };
-                
-            } else {
-                const montoTotal = parseFloat(prompt('Monto total del crédito:'));
-                if (!montoTotal || montoTotal <= 0) return;
-                
-                const montoPendiente = parseFloat(prompt('Monto pendiente:'));
-                if (!montoPendiente || montoPendiente <= 0) return;
-                
-                const cuotas = parseInt(prompt('Número total de cuotas:'));
-                if (!cuotas || cuotas <= 0) return;
-                
-                const cuotasRestantes = parseInt(prompt('Cuotas restantes:'));
-                if (!cuotasRestantes || cuotasRestantes <= 0 || cuotasRestantes > cuotas) return;
-                
-                const fechaPago = prompt('Día de pago (DD):');
-                if (!fechaPago) return;
-                
-                const agregarInteres = confirm('¿Especificar tasa de interés mensual?');
-                let tasaInteres = 0;
-                let cuotaMensual = montoPendiente / cuotasRestantes;
-                
-                if (agregarInteres) {
-                    tasaInteres = parseFloat(prompt('Tasa mensual (ej: 2.5 para 2.5%):'));
-                    if (tasaInteres && tasaInteres > 0) {
-                        const tasaDecimal = tasaInteres / 100;
-                        if (tasaDecimal > 0) {
-                            cuotaMensual = (montoPendiente * tasaDecimal * Math.pow(1 + tasaDecimal, cuotasRestantes)) / 
-                                          (Math.pow(1 + tasaDecimal, cuotasRestantes) - 1);
-                        }
-                    }
-                }
-                
-                gastoVariable = {
-                    ...gastoVariable,
-                    montoTotal,
-                    montoPendiente,
-                    cuotas,
-                    cuotasRestantes,
-                    fechaPago,
-                    cuotaMensual: Math.round(cuotaMensual),
-                    tasaInteres: tasaInteres || 0,
-                    tipoCalculo: 'monto_total'
-                };
-            }
-            
-            datos[mesActual].gastosVariables.push(gastoVariable);
             guardarDatos();
             actualizarListas();
         }
@@ -937,120 +851,90 @@
         function actualizarListas() {
             const datosMes = datos[mesActual];
             
-            // Actualizar ingresos
             const listaIngresos = document.getElementById('listaIngresos');
-            listaIngresos.innerHTML = datosMes.ingresos.map(ingreso => `
-                <div class="item">
-                    <div class="item-header">
-                        <div>
-                            <div class="item-title">${ingreso.concepto}</div>
-                            <div class="item-date">📅 ${ingreso.fecha} • ${ingreso.tipo}</div>
-                        </div>
-                        <div style="text-align: right;">
-                            <div class="item-amount" style="color: #00b894;">${formatMoney(ingreso.monto)}</div>
-                            <button class="btn btn-danger" style="padding: 5px 10px; margin-top: 5px;" onclick="eliminar(${ingreso.id}, 'ingreso')">🗑️</button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
+            listaIngresos.innerHTML = datosMes.ingresos.map(ingreso => 
+                '<div class="item">' +
+                    '<div class="item-header">' +
+                        '<div>' +
+                            '<div class="item-title">' + ingreso.concepto + '</div>' +
+                            '<div class="item-date">📅 ' + ingreso.fecha + ' • ' + ingreso.tipo + '</div>' +
+                        '</div>' +
+                        '<div style="text-align: right;">' +
+                            '<div class="item-amount" style="color: #00b894;">' + formatMoney(ingreso.monto) + '</div>' +
+                            '<button class="btn btn-danger" style="padding: 5px 10px; margin-top: 5px;" onclick="eliminar(' + ingreso.id + ', \'ingreso\')">🗑️</button>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>'
+            ).join('');
 
-            // Actualizar gastos fijos
             const listaFijos = document.getElementById('listaFijos');
-            listaFijos.innerHTML = datosMes.gastosFijos.map(gasto => `
-                <div class="item">
-                    <div class="item-header">
-                        <div>
-                            <div class="item-title">${gasto.concepto}</div>
-                            <div class="item-date">📅 Día ${gasto.fechaPago}</div>
-                        </div>
-                        <div style="text-align: right;">
-                            <div class="item-amount" style="color: #ff6b6b;">${formatMoney(gasto.monto)}</div>
-                            <button class="btn btn-danger" style="padding: 5px 10px; margin-top: 5px;" onclick="eliminar(${gasto.id}, 'fijo')">🗑️</button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
+            listaFijos.innerHTML = datosMes.gastosFijos.map(gasto => 
+                '<div class="item">' +
+                    '<div class="item-header">' +
+                        '<div>' +
+                            '<div class="item-title">' + gasto.concepto + '</div>' +
+                            '<div class="item-date">📅 Día ' + gasto.fechaPago + '</div>' +
+                        '</div>' +
+                        '<div style="text-align: right;">' +
+                            '<div class="item-amount" style="color: #ff6b6b;">' + formatMoney(gasto.monto) + '</div>' +
+                            '<button class="btn btn-danger" style="padding: 5px 10px; margin-top: 5px;" onclick="eliminar(' + gasto.id + ', \'fijo\')">🗑️</button>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>'
+            ).join('');
 
-            // Actualizar gastos variables
             const listaVariables = document.getElementById('listaVariables');
             listaVariables.innerHTML = datosMes.gastosVariables.map(gasto => {
-                const progreso = gasto.cuotas ? ((gasto.cuotas - gasto.cuotasRestantes) / gasto.cuotas) * 100 : 0;
-                const cuotaMensual = gasto.cuotaMensual || (gasto.montoPendiente / gasto.cuotasRestantes);
-                const totalAPagar = cuotaMensual * gasto.cuotasRestantes;
-                const interesRestante = totalAPagar - gasto.montoPendiente;
+                const totalAPagar = gasto.cuotaMensual * gasto.cuotasRestantes;
                 
-                return `
-                    <div class="item">
-                        <div class="item-header">
-                            <div>
-                                <div class="item-title">${gasto.concepto}</div>
-                                <div class="item-date">📅 Día ${gasto.fechaPago}${gasto.tasaInteres ? ` • ${gasto.tasaInteres}%` : ''}</div>
-                            </div>
-                            <button class="btn btn-danger" style="padding: 5px 10px;" onclick="eliminar(${gasto.id}, 'variable')">🗑️</button>
-                        </div>
-                        
-                        <div class="grid">
-                            <div class="grid-item">
-                                <div class="grid-label">Cuota Mensual</div>
-                                <div class="grid-value" style="color: #feca57; font-weight: bold;">${formatMoney(cuotaMensual)}</div>
-                            </div>
-                            <div class="grid-item">
-                                <div class="grid-label">Cuotas Restantes</div>
-                                <div class="grid-value">${gasto.cuotasRestantes}${gasto.cuotas ? `/${gasto.cuotas}` : ''}</div>
-                            </div>
-                            <div class="grid-item">
-                                <div class="grid-label">Saldo</div>
-                                <div class="grid-value" style="color: #ff6b6b;">${formatMoney(gasto.montoPendiente)}</div>
-                            </div>
-                            <div class="grid-item">
-                                <div class="grid-label">Total a Pagar</div>
-                                <div class="grid-value">${formatMoney(totalAPagar)}</div>
-                            </div>
-                        </div>
-                        
-                        ${gasto.cuotas ? `
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${progreso}%"></div>
-                        </div>
-                        <div style="text-align: center; font-size: 0.8em; color: #636e72;">
-                            ${Math.round(progreso)}% pagado
-                        </div>
-                        ` : `
-                        <div style="text-align: center; padding: 8px; background: #f8f9fa; border-radius: 8px; font-size: 0.85em;">
-                            💡 ${gasto.cuotasRestantes} cuotas restantes
-                        </div>
-                        `}
-                        
-                        ${interesRestante > 0 ? `
-                        <div style="margin-top: 10px; padding: 8px; background: linear-gradient(135deg, #ffeaa7, #fdcb6e); border-radius: 8px; font-size: 0.8em;">
-                            💰 Ahorro potencial: <strong>${formatMoney(interesRestante)}</strong>
-                        </div>
-                        ` : ''}
-                    </div>
-                `;
+                return '<div class="item">' +
+                    '<div class="item-header">' +
+                        '<div>' +
+                            '<div class="item-title">💳 ' + gasto.concepto + '</div>' +
+                            '<div class="item-date">📅 Día ' + gasto.fechaPago + '</div>' +
+                        '</div>' +
+                        '<button class="btn btn-danger" style="padding: 5px 10px;" onclick="eliminar(' + gasto.id + ', \'variable\')">🗑️</button>' +
+                    '</div>' +
+                    '<div class="grid">' +
+                        '<div class="grid-item">' +
+                            '<div class="grid-label">Cuota Mensual</div>' +
+                            '<div class="grid-value" style="color: #feca57; font-weight: bold;">' + formatMoney(gasto.cuotaMensual) + '</div>' +
+                        '</div>' +
+                        '<div class="grid-item">' +
+                            '<div class="grid-label">Cuotas Restantes</div>' +
+                            '<div class="grid-value">' + gasto.cuotasRestantes + '</div>' +
+                        '</div>' +
+                        '<div class="grid-item">' +
+                            '<div class="grid-label">Total a Pagar</div>' +
+                            '<div class="grid-value" style="color: #ff6b6b;">' + formatMoney(totalAPagar) + '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div style="text-align: center; padding: 8px; background: #f8f9fa; border-radius: 8px; font-size: 0.85em;">' +
+                        '💡 ' + gasto.cuotasRestantes + ' cuotas restantes' +
+                    '</div>' +
+                '</div>';
             }).join('');
 
-            // Actualizar compras
             const listaCompras = document.getElementById('listaCompras');
             listaCompras.innerHTML = datosMes.gastosCompras
                 .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
-                .map(compra => `
-                    <div class="item">
-                        <div class="item-header">
-                            <div>
-                                <div class="item-title">${compra.concepto}</div>
-                                <div class="item-date">
-                                    <span class="category-tag">${compra.categoria}</span>
-                                    📅 ${compra.fecha}
-                                </div>
-                            </div>
-                            <div style="text-align: right;">
-                                <div class="item-amount" style="color: #74b9ff;">${formatMoney(compra.monto)}</div>
-                                <button class="btn btn-danger" style="padding: 5px 10px; margin-top: 5px;" onclick="eliminar(${compra.id}, 'compra')">🗑️</button>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
+                .map(compra => 
+                    '<div class="item">' +
+                        '<div class="item-header">' +
+                            '<div>' +
+                                '<div class="item-title">' + compra.concepto + '</div>' +
+                                '<div class="item-date">' +
+                                    '<span class="category-tag">' + compra.categoria + '</span>' +
+                                    '📅 ' + compra.fecha +
+                                '</div>' +
+                            '</div>' +
+                            '<div style="text-align: right;">' +
+                                '<div class="item-amount" style="color: #74b9ff;">' + formatMoney(compra.monto) + '</div>' +
+                                '<button class="btn btn-danger" style="padding: 5px 10px; margin-top: 5px;" onclick="eliminar(' + compra.id + ', \'compra\')">🗑️</button>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>'
+                ).join('');
 
             actualizarResumen();
         }
@@ -1060,15 +944,11 @@
             
             const totalIngresos = datosMes.ingresos.reduce((sum, ingreso) => sum + ingreso.monto, 0);
             const totalFijos = datosMes.gastosFijos.reduce((sum, gasto) => sum + gasto.monto, 0);
-            const totalVariables = datosMes.gastosVariables.reduce((sum, gasto) => {
-                const cuotaMensual = gasto.cuotaMensual || (gasto.montoPendiente / gasto.cuotasRestantes);
-                return sum + cuotaMensual;
-            }, 0);
+            const totalVariables = datosMes.gastosVariables.reduce((sum, gasto) => sum + gasto.cuotaMensual, 0);
             const totalCompras = datosMes.gastosCompras.reduce((sum, compra) => sum + compra.monto, 0);
             const totalGastos = totalFijos + totalVariables + totalCompras;
             const dineroLibre = totalIngresos - totalGastos;
 
-            // Actualizar valores
             document.getElementById('totalIngresos').textContent = formatMoney(totalIngresos);
             document.getElementById('totalFijos').textContent = formatMoney(totalFijos);
             document.getElementById('totalVariables').textContent = formatMoney(totalVariables);
@@ -1076,13 +956,12 @@
             document.getElementById('totalGastos').textContent = formatMoney(totalGastos);
             document.getElementById('dineroLibre').textContent = formatMoney(dineroLibre);
 
-            // Actualizar porcentajes
             if (totalIngresos > 0) {
-                document.getElementById('fijosPorcentaje').textContent = `${Math.round((totalFijos / totalIngresos) * 100)}%`;
-                document.getElementById('variablesPorcentaje').textContent = `${Math.round((totalVariables / totalIngresos) * 100)}%`;
-                document.getElementById('comprasPorcentaje').textContent = `${Math.round((totalCompras / totalIngresos) * 100)}%`;
-                document.getElementById('gastosPorcentaje').textContent = `${Math.round((totalGastos / totalIngresos) * 100)}%`;
-                document.getElementById('librePorcentaje').textContent = `${Math.round((dineroLibre / totalIngresos) * 100)}%`;
+                document.getElementById('fijosPorcentaje').textContent = Math.round((totalFijos / totalIngresos) * 100) + '%';
+                document.getElementById('variablesPorcentaje').textContent = Math.round((totalVariables / totalIngresos) * 100) + '%';
+                document.getElementById('comprasPorcentaje').textContent = Math.round((totalCompras / totalIngresos) * 100) + '%';
+                document.getElementById('gastosPorcentaje').textContent = Math.round((totalGastos / totalIngresos) * 100) + '%';
+                document.getElementById('librePorcentaje').textContent = Math.round((dineroLibre / totalIngresos) * 100) + '%';
             } else {
                 document.getElementById('fijosPorcentaje').textContent = '0%';
                 document.getElementById('variablesPorcentaje').textContent = '0%';
@@ -1091,46 +970,34 @@
                 document.getElementById('librePorcentaje').textContent = '0%';
             }
 
-            // Actualizar indicador de balance
             const balanceIndicator = document.getElementById('balanceIndicator');
             if (dineroLibre >= 0) {
                 balanceIndicator.className = 'balance-indicator balance-positive';
-                balanceIndicator.innerHTML = `
-                    ✅ Balance: ${formatMoney(dineroLibre)}
-                    <br><small>¡Dinero libre para ahorrar!</small>
-                `;
+                balanceIndicator.innerHTML = '✅ Balance: ' + formatMoney(dineroLibre) + '<br><small>¡Dinero libre para ahorrar!</small>';
             } else {
                 balanceIndicator.className = 'balance-indicator balance-negative';
-                balanceIndicator.innerHTML = `
-                    ⚠️ Déficit: ${formatMoney(Math.abs(dineroLibre))}
-                    <br><small>Gastos superan ingresos</small>
-                `;
+                balanceIndicator.innerHTML = '⚠️ Déficit: ' + formatMoney(Math.abs(dineroLibre)) + '<br><small>Gastos superan ingresos</small>';
             }
         }
 
         function actualizarHistorial() {
             const meses = Object.keys(datos).sort().reverse();
-            let html = `
-                <table class="history-table">
-                    <thead>
-                        <tr>
-                            <th>Mes</th>
-                            <th>Ingresos</th>
-                            <th>Gastos</th>
-                            <th>Balance</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
+            let html = '<table class="history-table">' +
+                '<thead>' +
+                    '<tr>' +
+                        '<th>Mes</th>' +
+                        '<th>Ingresos</th>' +
+                        '<th>Gastos</th>' +
+                        '<th>Balance</th>' +
+                    '</tr>' +
+                '</thead>' +
+                '<tbody>';
             
             meses.forEach(mes => {
                 const datosMes = datos[mes];
                 const totalIngresos = datosMes.ingresos.reduce((sum, i) => sum + i.monto, 0);
                 const totalFijos = datosMes.gastosFijos.reduce((sum, g) => sum + g.monto, 0);
-                const totalVariables = datosMes.gastosVariables.reduce((sum, g) => {
-                    const cuotaMensual = g.cuotaMensual || (g.montoPendiente / g.cuotasRestantes);
-                    return sum + cuotaMensual;
-                }, 0);
+                const totalVariables = datosMes.gastosVariables.reduce((sum, g) => sum + g.cuotaMensual, 0);
                 const totalCompras = datosMes.gastosCompras.reduce((sum, c) => sum + c.monto, 0);
                 const totalGastos = totalFijos + totalVariables + totalCompras;
                 const balance = totalIngresos - totalGastos;
@@ -1140,16 +1007,14 @@
                     month: 'short' 
                 });
                 
-                html += `
-                    <tr>
-                        <td><strong>${nombreMes}</strong></td>
-                        <td style="color: #00b894;">${formatMoney(totalIngresos)}</td>
-                        <td style="color: #ff6b6b;">${formatMoney(totalGastos)}</td>
-                        <td style="color: ${balance >= 0 ? '#00b894' : '#ff6b6b'}; font-weight: bold;">
-                            ${formatMoney(balance)}
-                        </td>
-                    </tr>
-                `;
+                html += '<tr>' +
+                    '<td><strong>' + nombreMes + '</strong></td>' +
+                    '<td style="color: #00b894;">' + formatMoney(totalIngresos) + '</td>' +
+                    '<td style="color: #ff6b6b;">' + formatMoney(totalGastos) + '</td>' +
+                    '<td style="color: ' + (balance >= 0 ? '#00b894' : '#ff6b6b') + '; font-weight: bold;">' +
+                        formatMoney(balance) +
+                    '</td>' +
+                '</tr>';
             });
             
             html += '</tbody></table>';
@@ -1165,10 +1030,7 @@
             const datosMes = datos[mesActual];
             const totalIngresos = datosMes.ingresos.reduce((sum, i) => sum + i.monto, 0);
             const totalFijos = datosMes.gastosFijos.reduce((sum, g) => sum + g.monto, 0);
-            const totalVariables = datosMes.gastosVariables.reduce((sum, g) => {
-                const cuotaMensual = g.cuotaMensual || (g.montoPendiente / g.cuotasRestantes);
-                return sum + cuotaMensual;
-            }, 0);
+            const totalVariables = datosMes.gastosVariables.reduce((sum, g) => sum + g.cuotaMensual, 0);
             const promedioCompras = datosMes.gastosCompras.reduce((sum, c) => sum + c.monto, 0);
             
             const proyeccion6Meses = {
@@ -1183,47 +1045,45 @@
                 ahorro: (totalIngresos - totalFijos - totalVariables - promedioCompras) * 12
             };
             
-            let html = `
-                <div class="proyeccion-card">
-                    <h3>📈 Proyección 6 Meses</h3>
-                    <div class="proyeccion-grid">
-                        <div class="proyeccion-item">
-                            <div class="grid-label">Ingresos</div>
-                            <div class="grid-value" style="color: white; font-size: 1.1em;">${formatMoney(proyeccion6Meses.ingresos)}</div>
-                        </div>
-                        <div class="proyeccion-item">
-                            <div class="grid-label">Gastos</div>
-                            <div class="grid-value" style="color: white; font-size: 1.1em;">${formatMoney(proyeccion6Meses.gastos)}</div>
-                        </div>
-                        <div class="proyeccion-item">
-                            <div class="grid-label">Ahorro</div>
-                            <div class="grid-value" style="color: ${proyeccion6Meses.ahorro >= 0 ? '#00ff88' : '#ff6b6b'}; font-size: 1.1em; font-weight: bold;">${formatMoney(proyeccion6Meses.ahorro)}</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="proyeccion-card" style="background: linear-gradient(135deg, #00b894, #00cec9);">
-                    <h3>📅 Proyección Anual</h3>
-                    <div class="proyeccion-grid">
-                        <div class="proyeccion-item">
-                            <div class="grid-label">Ingresos</div>
-                            <div class="grid-value" style="color: white; font-size: 1.1em;">${formatMoney(proyeccionAnual.ingresos)}</div>
-                        </div>
-                        <div class="proyeccion-item">
-                            <div class="grid-label">Gastos</div>
-                            <div class="grid-value" style="color: white; font-size: 1.1em;">${formatMoney(proyeccionAnual.gastos)}</div>
-                        </div>
-                        <div class="proyeccion-item">
-                            <div class="grid-label">Ahorro</div>
-                            <div class="grid-value" style="color: ${proyeccionAnual.ahorro >= 0 ? '#00ff88' : '#ff6b6b'}; font-size: 1.1em; font-weight: bold;">${formatMoney(proyeccionAnual.ahorro)}</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div style="background: #f8f9fa; padding: 15px; border-radius: 15px; margin-top: 15px;">
-                    <h3 style="color: #2d3436; margin-bottom: 10px;">💡 Recomendaciones</h3>
-                    <div style="display: grid; gap: 8px; font-size: 0.9em;">
-            `;
+            let html = '<div class="proyeccion-card">' +
+                '<h3>📈 Proyección 6 Meses</h3>' +
+                '<div class="proyeccion-grid">' +
+                    '<div class="proyeccion-item">' +
+                        '<div class="grid-label">Ingresos</div>' +
+                        '<div class="grid-value" style="color: white; font-size: 1.1em;">' + formatMoney(proyeccion6Meses.ingresos) + '</div>' +
+                    '</div>' +
+                    '<div class="proyeccion-item">' +
+                        '<div class="grid-label">Gastos</div>' +
+                        '<div class="grid-value" style="color: white; font-size: 1.1em;">' + formatMoney(proyeccion6Meses.gastos) + '</div>' +
+                    '</div>' +
+                    '<div class="proyeccion-item">' +
+                        '<div class="grid-label">Ahorro</div>' +
+                        '<div class="grid-value" style="color: ' + (proyeccion6Meses.ahorro >= 0 ? '#00ff88' : '#ff6b6b') + '; font-size: 1.1em; font-weight: bold;">' + formatMoney(proyeccion6Meses.ahorro) + '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>' +
+            
+            '<div class="proyeccion-card" style="background: linear-gradient(135deg, #00b894, #00cec9);">' +
+                '<h3>📅 Proyección Anual</h3>' +
+                '<div class="proyeccion-grid">' +
+                    '<div class="proyeccion-item">' +
+                        '<div class="grid-label">Ingresos</div>' +
+                        '<div class="grid-value" style="color: white; font-size: 1.1em;">' + formatMoney(proyeccionAnual.ingresos) + '</div>' +
+                    '</div>' +
+                    '<div class="proyeccion-item">' +
+                        '<div class="grid-label">Gastos</div>' +
+                        '<div class="grid-value" style="color: white; font-size: 1.1em;">' + formatMoney(proyeccionAnual.gastos) + '</div>' +
+                    '</div>' +
+                    '<div class="proyeccion-item">' +
+                        '<div class="grid-label">Ahorro</div>' +
+                        '<div class="grid-value" style="color: ' + (proyeccionAnual.ahorro >= 0 ? '#00ff88' : '#ff6b6b') + '; font-size: 1.1em; font-weight: bold;">' + formatMoney(proyeccionAnual.ahorro) + '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>' +
+            
+            '<div style="background: #f8f9fa; padding: 15px; border-radius: 15px; margin-top: 15px;">' +
+                '<h3 style="color: #2d3436; margin-bottom: 10px;">💡 Recomendaciones</h3>' +
+                '<div style="display: grid; gap: 8px; font-size: 0.9em;">';
             
             const balanceActual = totalIngresos - (totalFijos + totalVariables + promedioCompras);
             const porcentajeGastosFijos = totalIngresos > 0 ? (totalFijos / totalIngresos) * 100 : 0;
@@ -1246,7 +1106,7 @@
                 html += '<div style="color: #74b9ff;">💳 Prioriza pagar deudas</div>';
             }
             
-            html += `</div></div>`;
+            html += '</div></div>';
             
             document.getElementById('contenidoProyecciones').innerHTML = html;
         }
@@ -1262,7 +1122,7 @@
             
             const link = document.createElement('a');
             link.href = URL.createObjectURL(dataBlob);
-            link.download = `organizador_financiero_${new Date().toISOString().slice(0, 10)}.json`;
+            link.download = 'organizador_financiero_' + new Date().toISOString().slice(0, 10) + '.json';
             link.click();
         }
 
@@ -1283,11 +1143,9 @@
             }
         }
 
-        // Inicializar
         actualizarListas();
         updateOnlineStatus();
         
-        // Ocultar banner de instalación si ya fue rechazado recientemente
         const lastDismissed = localStorage.getItem('installDismissed');
         if (lastDismissed && (Date.now() - lastDismissed < 24 * 60 * 60 * 1000)) {
             document.getElementById('installBanner').style.display = 'none';
@@ -1295,3 +1153,5 @@
     </script>
 </body>
 </html>
+         
+          
