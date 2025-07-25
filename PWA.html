@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#667eea">
+    <meta name="description" content="Organizador financiero personal - Control total de ingresos, gastos y balance mensual">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Mi Organizador Financiero">
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iOCIgZmlsbD0iIzY2N2VlYSIvPgo8dGV4dCB4PSI1IiB5PSIyMiIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE4IiBmaWxsPSJ3aGl0ZSI+JDwvdGV4dD4KPC9zdmc+">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDE4MCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxODAiIGhlaWdodD0iMTgwIiByeD0iNDAiIGZpbGw9IiM2NjdlZWEiLz4KPHRleHQgeD0iMzAiIHk9IjEyMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjgwIiBmaWxsPSJ3aGl0ZSI+JDwvdGV4dD4KPC9zdmc+">
+    
+    <title>Mi Organizador Financiero</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+            position: relative;
+        }
+        
+        /* PWA Install Banner */
+        .install-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .install-banner-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .install-text {
+            flex: 1;
+        }
+        
+        .install-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .install-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .install-btn.primary {
+            background: white;
+            color: #00b894;
+        }
+        
+        .install-btn.secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .header-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .month-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.1);
+            padding: 10px 15px;
+            border-radius: 10px;
+        }
+        
+        .month-selector select {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .month-selector select option {
+            background: #667eea;
+            color: white;
+        }
+        
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        
+        .summary-card {
+            padding: 15px;
+            border-radius: 15px;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .summary-card.ingresos { background: linear-gradient(135deg, #00b894, #00cec9); }
+        .summary-card.fijos { background: linear-gradient(135deg, #ff6b6b, #ee5a24); }
+        .summary-card.variables { background: linear-gradient(135deg, #feca57, #ff9ff3); }
+        .summary-card.compras { background: linear-gradient(135deg, #48cae4, #023e8a); }
+        .summary-card.total { background: linear-gradient(135deg, #2d3436, #636e72); }
+        .summary-card.libre { background: linear-gradient(135deg, #00b894, #55a3ff); }
+        
+        .summary-card h3 {
+            font-size: 0.85em;
+            margin-bottom: 8px;
+            opacity: 0.9;
+        }
+        
+        .summary-card .amount {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .summary-card .percentage {
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+        
+        .balance-indicator {
+            padding: 15px;
+            margin: 15px 20px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        
+        .balance-positive {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: white;
+        }
+        
+        .balance-negative {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+            overflow-x: auto;
+        }
+        
+        .tab {
+            flex: 1;
+            min-width: 100px;
+            padding: 12px 8px;
+            text-align: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        
+        .tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .tab:hover {
+            background: #e9ecef;
+        }
+        
+        .content {
+            padding: 20px;
+            min-height: 300px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .section-header h2 {
+            font-size: 1.3em;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .btn-primary { background: #667eea; color: white; }
+        .btn-success { background: #00b894; color: white; }
+        .btn-danger { background: #ff6b6b; color: white; }
+        .btn-warning { background: #feca57; color: white; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        
+        .item {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        
+        .item:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+        }
+        
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        
+        .item-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #2d3436;
+        }
+        
+        .item-date {
+            color: #636e72;
+            font-size: 0.85em;
+        }
+        
+        .item-amount {
+            font-size: 1.3em;
+            font-weight: 700;
+        }
+        
+        .progress-bar {
+            background: #e9ecef;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00b894, #00cec9);
+            transition: width 0.5s ease;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .grid-item {
+            text-align: center;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .grid-label {
+            font-size: 0.75em;
+            color: #636e72;
+            margin-bottom: 5px;
+        }
+        
+        .grid-value {
+            font-weight: 700;
+            color: #2d3436;
+            font-size: 0.9em;
+        }
+        
+        .category-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #74b9ff;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.75em;
+            margin-right: 8px;
+        }
+        
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+        
+        .history-table th,
+        .history-table td {
+            padding: 10px 8px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .history-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2d3436;
+            font-size: 0.8em;
+        }
+        
+        .history-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .proyeccion-card {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            margin: 15px 0;
+        }
+        
+        .proyeccion-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .proyeccion-item {
+            text-align: center;
+            padding: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        /* Offline indicator */
+        .offline-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #ff6b6b;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .offline-indicator.show {
+            display: block;
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab {
+                min-width: 80px;
+                font-size: 11px;
+                padding: 10px 5px;
+            }
+            
+            .summary {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                padding: 15px;
+            }
+            
+            .summary-card .amount {
+                font-size: 1.2em;
+            }
+            
+            .content {
+                padding: 15px;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .history-table {
+                font-size: 0.75em;
+            }
+            
+            .history-table th,
+            .history-table td {
+                padding: 6px 4px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .summary {
+                grid-template-columns: 1fr;
+            }
+            
+            .proyeccion-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Offline Indicator -->
+    <div id="offlineIndicator" class="offline-indicator">
+        📶 Sin conexión - Funcionando offline
+    </div>
+    
+    <!-- Install Banner -->
+    <div id="installBanner" class="install-banner">
+        <div class="install-banner-content">
+            <div class="install-text">
+                <strong>📱 ¡Instala la App!</strong><br>
+                <small>Accede rápido desde tu pantalla de inicio</small>
+            </div>
+            <div class="install-buttons">
+                <button class="install-btn primary" onclick="installApp()">Instalar</button>
+                <button class="install-btn secondary" onclick="dismissInstall()">Después</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>💰 Mi Organizador Financiero</h1>
+            <p>Control total de ingresos, gastos y balance mensual</p>
+            <div class="header-controls">
+                <div class="month-selector">
+                    <span>📅</span>
+                    <select id="mesSelector" onchange="cambiarMes()">
+                        <option value="2025-01">Enero 2025</option>
+                        <option value="2025-02">Febrero 2025</option>
+                        <option value="2025-03">Marzo 2025</option>
+                        <option value="2025-04">Abril 2025</option>
+                        <option value="2025-05">Mayo 2025</option>
+                        <option value="2025-06">Junio 2025</option>
+                        <option value="2025-07">Julio 2025</option>
+                        <option value="2025-08">Agosto 2025</option>
+                        <option value="2025-09">Septiembre 2025</option>
+                        <option value="2025-10">Octubre 2025</option>
+                        <option value="2025-11">Noviembre 2025</option>
+                        <option value="2025-12">Diciembre 2025</option>
+                    </select>
+                </div>
+                <button class="btn" style="background: rgba(255,255,255,0.2); color: white;" onclick="limpiarTodo()">🗑️ Limpiar</button>
+            </div>
+        </div>
+        
+        <div class="summary">
+            <div class="summary-card ingresos">
+                <h3>💵 Ingresos</h3>
+                <div class="amount" id="totalIngresos">$0</div>
+                <div class="percentage" id="ingresosPorcentaje">100%</div>
+            </div>
+            <div class="summary-card fijos">
+                <h3>🏠 Gastos Fijos</h3>
+                <div class="amount" id="totalFijos">$0</div>
+                <div class="percentage" id="fijosPorcentaje">0%</div>
+            </div>
+            <div class="summary-card variables">
+                <h3>💳 Cuotas</h3>
+                <div class="amount" id="totalVariables">$0</div>
+                <div class="percentage" id="variablesPorcentaje">0%</div>
+            </div>
+            <div class="summary-card compras">
+                <h3>🛒 Compras</h3>
+                <div class="amount" id="totalCompras">$0</div>
+                <div class="percentage" id="comprasPorcentaje">0%</div>
+            </div>
+            <div class="summary-card total">
+                <h3>📊 Total Gastos</h3>
+                <div class="amount" id="totalGastos">$0</div>
+                <div class="percentage" id="gastosPorcentaje">0%</div>
+            </div>
+            <div class="summary-card libre">
+                <h3>💰 Libre</h3>
+                <div class="amount" id="dineroLibre">$0</div>
+                <div class="percentage" id="librePorcentaje">0%</div>
+            </div>
+        </div>
+        
+        <div id="balanceIndicator" class="balance-indicator"></div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('ingresos')">💵 Ingresos</button>
+            <button class="tab" onclick="showTab('fijos')">🏠 Fijos</button>
+            <button class="tab" onclick="showTab('variables')">💳 Créditos</button>
+            <button class="tab" onclick="showTab('compras')">🛒 Compras</button>
+            <button class="tab" onclick="showTab('historial')">📊 Historial</button>
+            <button class="tab" onclick="showTab('proyecciones')">🔮 Futuro</button>
+        </div>
+        
+        <div class="content">
+            <!-- Ingresos -->
+            <div id="ingresos" class="tab-content">
+                <div class="section-header">
+                    <h2>💵 Ingresos Mensuales</h2>
+                    <button class="btn btn-success" onclick="agregarIngreso()">+ Agregar</button>
+                </div>
+                <div id="listaIngresos"></div>
+            </div>
+            
+            <!-- Gastos Fijos -->
+            <div id="fijos" class="tab-content hidden">
+                <div class="section-header">
+                    <h2>🏠 Gastos Fijos</h2>
+                    <button class="btn btn-primary" onclick="agregarGastoFijo()">+ Agregar</button>
+                </div>
+                <div id="listaFijos"></div>
+            </div>
+            
+            <!-- Gastos Variables -->
+            <div id="variables" class="tab-content hidden">
+                <div class="section-header">
+                    <h2>💳 Créditos y Tarjetas</h2>
+                    <button class="btn btn-warning" onclick="agregarGastoVariable()">+ Agregar</button>
+                </div>
+                <div id="listaVariables"></div>
+            </div>
+            
+            <!-- Compras -->
+            <div id="compras" class="tab-content hidden">
+                <div class="section-header">
+                    <h2>🛒 Compras Diarias</h2>
+                    <button class="btn btn-primary" onclick="agregarCompra()">+ Agregar</button>
+                </div>
+                <div id="listaCompras"></div>
+            </div>
+            
+            <!-- Historial -->
+            <div id="historial" class="tab-content hidden">
+                <div class="section-header">
+                    <h2>📊 Historial Mensual</h2>
+                    <button class="btn btn-primary" onclick="exportarHistorial()">📥 Exportar</button>
+                </div>
+                <div id="tablaHistorial"></div>
+            </div>
+            
+            <!-- Proyecciones -->
+            <div id="proyecciones" class="tab-content hidden">
+                <div class="section-header">
+                    <h2>🔮 Proyecciones</h2>
+                </div>
+                <div id="contenidoProyecciones"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let mesActual = new Date().toISOString().slice(0, 7);
+        let datos = JSON.parse(localStorage.getItem('organizadorFinanciero') || '{}');
+        let deferredPrompt = null;
+        
+        // Inicializar datos del mes actual si no existen
+        if (!datos[mesActual]) {
+            datos[mesActual] = {
+                ingresos: [],
+                gastosFijos: [],
+                gastosVariables: [],
+                gastosCompras: []
+            };
+        }
+        
+        // Establecer mes actual en selector
+        document.getElementById('mesSelector').value = mesActual;
+
+        // PWA Installation
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installBanner').style.display = 'block';
+        });
+
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Usuario instaló la PWA');
+                    }
+                    deferredPrompt = null;
+                    document.getElementById('installBanner').style.display = 'none';
+                });
+            }
+        }
+
+        function dismissInstall() {
+            document.getElementById('installBanner').style.display = 'none';
+            localStorage.setItem('installDismissed', Date.now());
+        }
+
+        // Offline Detection
+        function updateOnlineStatus() {
+            const offlineIndicator = document.getElementById('offlineIndicator');
+            if (navigator.onLine) {
+                offlineIndicator.classList.remove('show');
+            } else {
+                offlineIndicator.classList.add('show');
+            }
+        }
+
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then((registration) => {
+                        console.log('SW registrado: ', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.log('SW falló: ', registrationError);
+                    });
+            });
+        }
+
+        function formatMoney(amount) {
+            return new Intl.NumberFormat('es-CO', {
+                style: 'currency',
+                currency: 'COP',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function cambiarMes() {
+            mesActual = document.getElementById('mesSelector').value;
+            if (!datos[mesActual]) {
+                datos[mesActual] = {
+                    ingresos: [],
+                    gastosFijos: [],
+                    gastosVariables: [],
+                    gastosCompras: []
+                };
+            }
+            actualizarListas();
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.remove('hidden');
+            event.target.classList.add('active');
+            
+            if (tabName === 'historial') {
+                actualizarHistorial();
+            } else if (tabName === 'proyecciones') {
+                actualizarProyecciones();
+            }
+        }
+
+        function agregarIngreso() {
+            const concepto = prompt('Fuente de ingreso (ej: Sueldo, Freelance):');
+            if (!concepto) return;
+            
+            const monto = parseFloat(prompt('Monto del ingreso:'));
+            if (!monto || monto <= 0) return;
+            
+            const fecha = prompt('Fecha (YYYY-MM-DD):', new Date().toISOString().slice(0, 10));
+            if (!fecha) return;
+            
+            const tipo = prompt('Tipo (Mensual, Único, Comisión):', 'Mensual');
+            
+            datos[mesActual].ingresos.push({
+                id: Date.now(),
+                concepto,
+                monto,
+                fecha,
+                tipo
+            });
+            
+            guardarDatos();
+            actualizarListas();
+        }
+
+        function agregarGastoFijo() {
+            const concepto = prompt('Concepto (ej: Renta, Internet):');
+            if (!concepto) return;
+            
+            const monto = parseFloat(prompt('Monto mensual:'));
+            if (!monto || monto <= 0) return;
+            
+            const fechaPago = prompt('Día de pago (DD):');
+            if (!fechaPago) return;
+            
+            datos[mesActual].gastosFijos.push({
+                id: Date.now(),
+                concepto,
+                monto,
+                fechaPago
+            });
+            
+            guardarDatos();
+            actualizarListas();
+        }
+
+        function agregarGastoVariable() {
+            const concepto = prompt('Concepto (ej: Tarjeta Visa):');
+            if (!concepto) return;
+            
+            const tipoCalculo = confirm('¿Ingresar cuota mensual directamente?\n\nSí = Cuota conocida\nNo = Calcular desde monto total');
+            
+            let gastoVariable = {
+                id: Date.now(),
+                concepto
+            };
+            
+            if (tipoCalculo) {
+                const cuotaMensual = parseFloat(prompt('Valor de la cuota mensual:'));
+                if (!cuotaMensual || cuotaMensual <= 0) return;
+                
+                const cuotasRestantes = parseInt(prompt('Cuotas que faltan:'));
+                if (!cuotasRestantes || cuotasRestantes <= 0) return;
+                
+                const montoTotal = parseFloat(prompt('Monto total original (opcional):', '0'));
+                const montoPendiente = cuotaMensual * cuotasRestantes;
+                
+                const fechaPago = prompt('Día de pago (DD):');
+                if (!fechaPago) return;
+                
+                let tasaInteres = 0;
+                if (montoTotal > 0) {
+                    const cuotasOriginales = parseInt(prompt('Cuotas totales originales:', cuotasRestantes.toString()));
+                    if (cuotasOriginales) {
+                        const totalPagado = cuotaMensual * cuotasOriginales;
+                        const interesTotal = totalPagado - montoTotal;
+                        tasaInteres = (interesTotal / montoTotal) * 100;
+                    }
+                }
+                
+                gastoVariable = {
+                    ...gastoVariable,
+                    cuotaMensual,
+                    montoPendiente,
+                    cuotasRestantes,
+                    montoTotal: montoTotal || 0,
+                    cuotas: cuotasRestantes,
+                    fechaPago,
+                    tasaInteres: Math.round(tasaInteres * 100) / 100,
+                    tipoCalculo: 'cuota_directa'
+                };
+                
+            } else {
+                const montoTotal = parseFloat(prompt('Monto total del crédito:'));
+                if (!montoTotal || montoTotal <= 0) return;
+                
+                const montoPendiente = parseFloat(prompt('Monto pendiente:'));
+                if (!montoPendiente || montoPendiente <= 0) return;
+                
+                const cuotas = parseInt(prompt('Número total de cuotas:'));
+                if (!cuotas || cuotas <= 0) return;
+                
+                const cuotasRestantes = parseInt(prompt('Cuotas restantes:'));
+                if (!cuotasRestantes || cuotasRestantes <= 0 || cuotasRestantes > cuotas) return;
+                
+                const fechaPago = prompt('Día de pago (DD):');
+                if (!fechaPago) return;
+                
+                const agregarInteres = confirm('¿Especificar tasa de interés mensual?');
+                let tasaInteres = 0;
+                let cuotaMensual = montoPendiente / cuotasRestantes;
+                
+                if (agregarInteres) {
+                    tasaInteres = parseFloat(prompt('Tasa mensual (ej: 2.5 para 2.5%):'));
+                    if (tasaInteres && tasaInteres > 0) {
+                        const tasaDecimal = tasaInteres / 100;
+                        if (tasaDecimal > 0) {
+                            cuotaMensual = (montoPendiente * tasaDecimal * Math.pow(1 + tasaDecimal, cuotasRestantes)) / 
+                                          (Math.pow(1 + tasaDecimal, cuotasRestantes) - 1);
+                        }
+                    }
+                }
+                
+                gastoVariable = {
+                    ...gastoVariable,
+                    montoTotal,
+                    montoPendiente,
+                    cuotas,
+                    cuotasRestantes,
+                    fechaPago,
+                    cuotaMensual: Math.round(cuotaMensual),
+                    tasaInteres: tasaInteres || 0,
+                    tipoCalculo: 'monto_total'
+                };
+            }
+            
+            datos[mesActual].gastosVariables.push(gastoVariable);
+            guardarDatos();
+            actualizarListas();
+        }
+
+        function agregarCompra() {
+            const concepto = prompt('¿Qué compraste?');
+            if (!concepto) return;
+            
+            const monto = parseFloat(prompt('¿Cuánto gastaste?'));
+            if (!monto || monto <= 0) return;
+            
+            const categoria = prompt('Categoría (Alimentación, Transporte, etc.):');
+            if (!categoria) return;
+            
+            datos[mesActual].gastosCompras.push({
+                id: Date.now(),
+                concepto,
+                monto,
+                categoria,
+                fecha: new Date().toLocaleDateString('es-CO')
+            });
+            
+            guardarDatos();
+            actualizarListas();
+        }
+
+        function eliminar(id, tipo) {
+            if (!confirm('¿Eliminar este elemento?')) return;
+            
+            switch(tipo) {
+                case 'ingreso':
+                    datos[mesActual].ingresos = datos[mesActual].ingresos.filter(item => item.id !== id);
+                    break;
+                case 'fijo':
+                    datos[mesActual].gastosFijos = datos[mesActual].gastosFijos.filter(item => item.id !== id);
+                    break;
+                case 'variable':
+                    datos[mesActual].gastosVariables = datos[mesActual].gastosVariables.filter(item => item.id !== id);
+                    break;
+                case 'compra':
+                    datos[mesActual].gastosCompras = datos[mesActual].gastosCompras.filter(item => item.id !== id);
+                    break;
+            }
+            
+            guardarDatos();
+            actualizarListas();
+        }
+
+        function guardarDatos() {
+            localStorage.setItem('organizadorFinanciero', JSON.stringify(datos));
+        }
+
+        function actualizarListas() {
+            const datosMes = datos[mesActual];
+            
+            // Actualizar ingresos
+            const listaIngresos = document.getElementById('listaIngresos');
+            listaIngresos.innerHTML = datosMes.ingresos.map(ingreso => `
+                <div class="item">
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title">${ingreso.concepto}</div>
+                            <div class="item-date">📅 ${ingreso.fecha} • ${ingreso.tipo}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="item-amount" style="color: #00b894;">${formatMoney(ingreso.monto)}</div>
+                            <button class="btn btn-danger" style="padding: 5px 10px; margin-top: 5px;" onclick="eliminar(${ingreso.id}, 'ingreso')">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Actualizar gastos fijos
+            const listaFijos = document.getElementById('listaFijos');
+            listaFijos.innerHTML = datosMes.gastosFijos.map(gasto => `
+                <div class="item">
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title">${gasto.concepto}</div>
+                            <div class="item-date">📅 Día ${gasto.fechaPago}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="item-amount" style="color: #ff6b6b;">${formatMoney(gasto.monto)}</div>
+                            <button class="btn btn-danger" style="padding: 5px 10px; margin-top: 5px;" onclick="eliminar(${gasto.id}, 'fijo')">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Actualizar gastos variables
+            const listaVariables = document.getElementById('listaVariables');
+            listaVariables.innerHTML = datosMes.gastosVariables.map(gasto => {
+                const progreso = gasto.cuotas ? ((gasto.cuotas - gasto.cuotasRestantes) / gasto.cuotas) * 100 : 0;
+                const cuotaMensual = gasto.cuotaMensual || (gasto.montoPendiente / gasto.cuotasRestantes);
+                const totalAPagar = cuotaMensual * gasto.cuotasRestantes;
+                const interesRestante = totalAPagar - gasto.montoPendiente;
+                
+                return `
+                    <div class="item">
+                        <div class="item-header">
+                            <div>
+                                <div class="item-title">${gasto.concepto}</div>
+                                <div class="item-date">📅 Día ${gasto.fechaPago}${gasto.tasaInteres ? ` • ${gasto.tasaInteres}%` : ''}</div>
+                            </div>
+                            <button class="btn btn-danger" style="padding: 5px 10px;" onclick="eliminar(${gasto.id}, 'variable')">🗑️</button>
+                        </div>
+                        
+                        <div class="grid">
+                            <div class="grid-item">
+                                <div class="grid-label">Cuota Mensual</div>
+                                <div class="grid-value" style="color: #feca57; font-weight: bold;">${formatMoney(cuotaMensual)}</div>
+                            </div>
+                            <div class="grid-item">
+                                <div class="grid-label">Cuotas Restantes</div>
+                                <div class="grid-value">${gasto.cuotasRestantes}${gasto.cuotas ? `/${gasto.cuotas}` : ''}</div>
+                            </div>
+                            <div class="grid-item">
+                                <div class="grid-label">Saldo</div>
+                                <div class="grid-value" style="color: #ff6b6b;">${formatMoney(gasto.montoPendiente)}</div>
+                            </div>
+                            <div class="grid-item">
+                                <div class="grid-label">Total a Pagar</div>
+                                <div class="grid-value">${formatMoney(totalAPagar)}</div>
+                            </div>
+                        </div>
+                        
+                        ${gasto.cuotas ? `
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${progreso}%"></div>
+                        </div>
+                        <div style="text-align: center; font-size: 0.8em; color: #636e72;">
+                            ${Math.round(progreso)}% pagado
+                        </div>
+                        ` : `
+                        <div style="text-align: center; padding: 8px; background: #f8f9fa; border-radius: 8px; font-size: 0.85em;">
+                            💡 ${gasto.cuotasRestantes} cuotas restantes
+                        </div>
+                        `}
+                        
+                        ${interesRestante > 0 ? `
+                        <div style="margin-top: 10px; padding: 8px; background: linear-gradient(135deg, #ffeaa7, #fdcb6e); border-radius: 8px; font-size: 0.8em;">
+                            💰 Ahorro potencial: <strong>${formatMoney(interesRestante)}</strong>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            // Actualizar compras
+            const listaCompras = document.getElementById('listaCompras');
+            listaCompras.innerHTML = datosMes.gastosCompras
+                .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+                .map(compra => `
+                    <div class="item">
+                        <div class="item-header">
+                            <div>
+                                <div class="item-title">${compra.concepto}</div>
+                                <div class="item-date">
+                                    <span class="category-tag">${compra.categoria}</span>
+                                    📅 ${compra.fecha}
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div class="item-amount" style="color: #74b9ff;">${formatMoney(compra.monto)}</div>
+                                <button class="btn btn-danger" style="padding: 5px 10px; margin-top: 5px;" onclick="eliminar(${compra.id}, 'compra')">🗑️</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+            actualizarResumen();
+        }
+
+        function actualizarResumen() {
+            const datosMes = datos[mesActual];
+            
+            const totalIngresos = datosMes.ingresos.reduce((sum, ingreso) => sum + ingreso.monto, 0);
+            const totalFijos = datosMes.gastosFijos.reduce((sum, gasto) => sum + gasto.monto, 0);
+            const totalVariables = datosMes.gastosVariables.reduce((sum, gasto) => {
+                const cuotaMensual = gasto.cuotaMensual || (gasto.montoPendiente / gasto.cuotasRestantes);
+                return sum + cuotaMensual;
+            }, 0);
+            const totalCompras = datosMes.gastosCompras.reduce((sum, compra) => sum + compra.monto, 0);
+            const totalGastos = totalFijos + totalVariables + totalCompras;
+            const dineroLibre = totalIngresos - totalGastos;
+
+            // Actualizar valores
+            document.getElementById('totalIngresos').textContent = formatMoney(totalIngresos);
+            document.getElementById('totalFijos').textContent = formatMoney(totalFijos);
+            document.getElementById('totalVariables').textContent = formatMoney(totalVariables);
+            document.getElementById('totalCompras').textContent = formatMoney(totalCompras);
+            document.getElementById('totalGastos').textContent = formatMoney(totalGastos);
+            document.getElementById('dineroLibre').textContent = formatMoney(dineroLibre);
+
+            // Actualizar porcentajes
+            if (totalIngresos > 0) {
+                document.getElementById('fijosPorcentaje').textContent = `${Math.round((totalFijos / totalIngresos) * 100)}%`;
+                document.getElementById('variablesPorcentaje').textContent = `${Math.round((totalVariables / totalIngresos) * 100)}%`;
+                document.getElementById('comprasPorcentaje').textContent = `${Math.round((totalCompras / totalIngresos) * 100)}%`;
+                document.getElementById('gastosPorcentaje').textContent = `${Math.round((totalGastos / totalIngresos) * 100)}%`;
+                document.getElementById('librePorcentaje').textContent = `${Math.round((dineroLibre / totalIngresos) * 100)}%`;
+            } else {
+                document.getElementById('fijosPorcentaje').textContent = '0%';
+                document.getElementById('variablesPorcentaje').textContent = '0%';
+                document.getElementById('comprasPorcentaje').textContent = '0%';
+                document.getElementById('gastosPorcentaje').textContent = '0%';
+                document.getElementById('librePorcentaje').textContent = '0%';
+            }
+
+            // Actualizar indicador de balance
+            const balanceIndicator = document.getElementById('balanceIndicator');
+            if (dineroLibre >= 0) {
+                balanceIndicator.className = 'balance-indicator balance-positive';
+                balanceIndicator.innerHTML = `
+                    ✅ Balance: ${formatMoney(dineroLibre)}
+                    <br><small>¡Dinero libre para ahorrar!</small>
+                `;
+            } else {
+                balanceIndicator.className = 'balance-indicator balance-negative';
+                balanceIndicator.innerHTML = `
+                    ⚠️ Déficit: ${formatMoney(Math.abs(dineroLibre))}
+                    <br><small>Gastos superan ingresos</small>
+                `;
+            }
+        }
+
+        function actualizarHistorial() {
+            const meses = Object.keys(datos).sort().reverse();
+            let html = `
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Mes</th>
+                            <th>Ingresos</th>
+                            <th>Gastos</th>
+                            <th>Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            meses.forEach(mes => {
+                const datosMes = datos[mes];
+                const totalIngresos = datosMes.ingresos.reduce((sum, i) => sum + i.monto, 0);
+                const totalFijos = datosMes.gastosFijos.reduce((sum, g) => sum + g.monto, 0);
+                const totalVariables = datosMes.gastosVariables.reduce((sum, g) => {
+                    const cuotaMensual = g.cuotaMensual || (g.montoPendiente / g.cuotasRestantes);
+                    return sum + cuotaMensual;
+                }, 0);
+                const totalCompras = datosMes.gastosCompras.reduce((sum, c) => sum + c.monto, 0);
+                const totalGastos = totalFijos + totalVariables + totalCompras;
+                const balance = totalIngresos - totalGastos;
+                
+                const nombreMes = new Date(mes + '-01').toLocaleDateString('es-CO', { 
+                    year: 'numeric', 
+                    month: 'short' 
+                });
+                
+                html += `
+                    <tr>
+                        <td><strong>${nombreMes}</strong></td>
+                        <td style="color: #00b894;">${formatMoney(totalIngresos)}</td>
+                        <td style="color: #ff6b6b;">${formatMoney(totalGastos)}</td>
+                        <td style="color: ${balance >= 0 ? '#00b894' : '#ff6b6b'}; font-weight: bold;">
+                            ${formatMoney(balance)}
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += '</tbody></table>';
+            
+            if (meses.length === 0) {
+                html = '<div style="text-align: center; padding: 40px; color: #636e72;">Sin datos históricos</div>';
+            }
+            
+            document.getElementById('tablaHistorial').innerHTML = html;
+        }
+
+        function actualizarProyecciones() {
+            const datosMes = datos[mesActual];
+            const totalIngresos = datosMes.ingresos.reduce((sum, i) => sum + i.monto, 0);
+            const totalFijos = datosMes.gastosFijos.reduce((sum, g) => sum + g.monto, 0);
+            const totalVariables = datosMes.gastosVariables.reduce((sum, g) => {
+                const cuotaMensual = g.cuotaMensual || (g.montoPendiente / g.cuotasRestantes);
+                return sum + cuotaMensual;
+            }, 0);
+            const promedioCompras = datosMes.gastosCompras.reduce((sum, c) => sum + c.monto, 0);
+            
+            const proyeccion6Meses = {
+                ingresos: totalIngresos * 6,
+                gastos: (totalFijos + totalVariables + promedioCompras) * 6,
+                ahorro: (totalIngresos - totalFijos - totalVariables - promedioCompras) * 6
+            };
+            
+            const proyeccionAnual = {
+                ingresos: totalIngresos * 12,
+                gastos: (totalFijos + totalVariables + promedioCompras) * 12,
+                ahorro: (totalIngresos - totalFijos - totalVariables - promedioCompras) * 12
+            };
+            
+            let html = `
+                <div class="proyeccion-card">
+                    <h3>📈 Proyección 6 Meses</h3>
+                    <div class="proyeccion-grid">
+                        <div class="proyeccion-item">
+                            <div class="grid-label">Ingresos</div>
+                            <div class="grid-value" style="color: white; font-size: 1.1em;">${formatMoney(proyeccion6Meses.ingresos)}</div>
+                        </div>
+                        <div class="proyeccion-item">
+                            <div class="grid-label">Gastos</div>
+                            <div class="grid-value" style="color: white; font-size: 1.1em;">${formatMoney(proyeccion6Meses.gastos)}</div>
+                        </div>
+                        <div class="proyeccion-item">
+                            <div class="grid-label">Ahorro</div>
+                            <div class="grid-value" style="color: ${proyeccion6Meses.ahorro >= 0 ? '#00ff88' : '#ff6b6b'}; font-size: 1.1em; font-weight: bold;">${formatMoney(proyeccion6Meses.ahorro)}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="proyeccion-card" style="background: linear-gradient(135deg, #00b894, #00cec9);">
+                    <h3>📅 Proyección Anual</h3>
+                    <div class="proyeccion-grid">
+                        <div class="proyeccion-item">
+                            <div class="grid-label">Ingresos</div>
+                            <div class="grid-value" style="color: white; font-size: 1.1em;">${formatMoney(proyeccionAnual.ingresos)}</div>
+                        </div>
+                        <div class="proyeccion-item">
+                            <div class="grid-label">Gastos</div>
+                            <div class="grid-value" style="color: white; font-size: 1.1em;">${formatMoney(proyeccionAnual.gastos)}</div>
+                        </div>
+                        <div class="proyeccion-item">
+                            <div class="grid-label">Ahorro</div>
+                            <div class="grid-value" style="color: ${proyeccionAnual.ahorro >= 0 ? '#00ff88' : '#ff6b6b'}; font-size: 1.1em; font-weight: bold;">${formatMoney(proyeccionAnual.ahorro)}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 15px; margin-top: 15px;">
+                    <h3 style="color: #2d3436; margin-bottom: 10px;">💡 Recomendaciones</h3>
+                    <div style="display: grid; gap: 8px; font-size: 0.9em;">
+            `;
+            
+            const balanceActual = totalIngresos - (totalFijos + totalVariables + promedioCompras);
+            const porcentajeGastosFijos = totalIngresos > 0 ? (totalFijos / totalIngresos) * 100 : 0;
+            
+            if (totalIngresos === 0) {
+                html += '<div style="color: #ff6b6b;">⚠️ Agrega tus ingresos para ver proyecciones</div>';
+            } else if (balanceActual < 0) {
+                html += '<div style="color: #ff6b6b;">⚠️ Reduce gastos o aumenta ingresos</div>';
+            } else if (balanceActual < totalIngresos * 0.1) {
+                html += '<div style="color: #feca57;">💡 Trata de ahorrar al menos 10%</div>';
+            } else {
+                html += '<div style="color: #00b894;">✅ ¡Buen balance financiero!</div>';
+            }
+            
+            if (porcentajeGastosFijos > 50) {
+                html += '<div style="color: #ff6b6b;">🏠 Gastos fijos muy altos (>50%)</div>';
+            }
+            
+            if (datosMes.gastosVariables.length > 0) {
+                html += '<div style="color: #74b9ff;">💳 Prioriza pagar deudas</div>';
+            }
+            
+            html += `</div></div>`;
+            
+            document.getElementById('contenidoProyecciones').innerHTML = html;
+        }
+
+        function exportarHistorial() {
+            const datos_export = {
+                fecha_exportacion: new Date().toISOString(),
+                datos_mensuales: datos
+            };
+            
+            const dataStr = JSON.stringify(datos_export, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `organizador_financiero_${new Date().toISOString().slice(0, 10)}.json`;
+            link.click();
+        }
+
+        function limpiarTodo() {
+            if (confirm('¿Eliminar TODOS los datos?')) {
+                if (confirm('¿REALMENTE estás seguro?')) {
+                    localStorage.removeItem('organizadorFinanciero');
+                    datos = {};
+                    datos[mesActual] = {
+                        ingresos: [],
+                        gastosFijos: [],
+                        gastosVariables: [],
+                        gastosCompras: []
+                    };
+                    actualizarListas();
+                    alert('Datos eliminados.');
+                }
+            }
+        }
+
+        // Inicializar
+        actualizarListas();
+        updateOnlineStatus();
+        
+        // Ocultar banner de instalación si ya fue rechazado recientemente
+        const lastDismissed = localStorage.getItem('installDismissed');
+        if (lastDismissed && (Date.now() - lastDismissed < 24 * 60 * 60 * 1000)) {
+            document.getElementById('installBanner').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
